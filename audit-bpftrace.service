@@ -1,0 +1,17 @@
+# /usr/lib/systemd/system/audit-bpftrace.service
+[Unit]
+Description=Run bpftrace audit script and log to /var/log/audit.txt
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/bpftrace /usr/bin/audit.bt
+Restart=always
+User=root
+Group=root
+StandardOutput=append:/var/log/user_audit.txt
+StandardError=append:/var/log/user_audit.txt
+Environment=PATH=/usr/sbin:/usr/bin:/sbin:/bin
+WorkingDirectory=/tmp
+
+[Install]
+WantedBy=multi-user.target
