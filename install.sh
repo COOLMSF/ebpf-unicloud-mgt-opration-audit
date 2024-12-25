@@ -1,2 +1,2 @@
-mv audit.bt /usr/bin
-mv audit-bpftrace.service  /usr/lib/systemd/system/
+cp audit.bt /usr/bin
+cp audit-bpftrace.service  /usr/lib/systemd/system/
