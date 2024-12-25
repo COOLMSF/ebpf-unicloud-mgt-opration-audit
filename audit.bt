@@ -12,7 +12,7 @@
  *
  * 15-Nov-2017  Brendan Gregg   Created this.
  * 11-Sep-2018     "     "      Switched to use join().
- * 25-Dec-2024 hushanglai@unicloud.com Modified this.
+ * 25-Dec-2024 hushanglai@unicloud.com(aka COOLMSF) Modified this.
  */
 
 #ifndef BPFTRACE_HAVE_BTF
