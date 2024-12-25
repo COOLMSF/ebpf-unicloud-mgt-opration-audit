@@ -40,28 +40,28 @@ uretprobe:/bin/bash:readline
     printf("%-20s %-6d %s\n", $date_time_str, pid, str(retval));
 }
 
-tracepoint:syscalls:sys_enter_execve
-{
-        $task = (struct task_struct *)curtask;
-
-        $argv0 = str(args->argv[0]);
-
-        if (strncmp($argv0, "/bin/bash", 9) == 0 || strncmp($argv0, "/bin/sh", 7) == 0 || strncmp($argv0, "sh", 2) == 0 || strncmp($argv0, "bash", 4) == 0) {
-
-        printf("%-15s %-7s %s\n", "TIME", "PID", "ARGS");
-
-    // Extract seconds and nanoseconds
-    $seconds = nsecs / 1000000000;
-    $nanoseconds = nsecs % 1000000000;
-
-    // Format date and time
-    $date_time_str = strftime("%Y-%m-%d %H:%M:%S", $seconds);
-    $microseconds = $nanoseconds / 1000; // Convert nanoseconds to microseconds
-
-    // Print the formatted date/time, PID, uid, and arguments
-    printf("%20s.%06d %-7d %s\n", $date_time_str, $microseconds, pid, str(args->filename));
-
-          join(args->argv);
-
-        }
-}
+// tracepoint:syscalls:sys_enter_execve
+// {
+//         $task = (struct task_struct *)curtask;
+// 
+//         $argv0 = str(args->argv[0]);
+// 
+//         if (strncmp($argv0, "/bin/bash", 9) == 0 || strncmp($argv0, "/bin/sh", 7) == 0 || strncmp($argv0, "sh", 2) == 0 || strncmp($argv0, "bash", 4) == 0) {
+// 
+//         printf("%-15s %-7s %s\n", "TIME", "PID", "ARGS");
+// 
+//     // Extract seconds and nanoseconds
+//     $seconds = nsecs / 1000000000;
+//     $nanoseconds = nsecs % 1000000000;
+// 
+//     // Format date and time
+//     $date_time_str = strftime("%Y-%m-%d %H:%M:%S", $seconds);
+//     $microseconds = $nanoseconds / 1000; // Convert nanoseconds to microseconds
+// 
+//     // Print the formatted date/time, PID, uid, and arguments
+//     printf("%20s.%06d %-7d %s\n", $date_time_str, $microseconds, pid, str(args->filename));
+// 
+//           join(args->argv);
+// 
+//         }
+// }
