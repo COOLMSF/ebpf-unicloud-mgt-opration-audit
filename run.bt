@@ -1,0 +1,62 @@
+/*
+ * execsnoop.bt   Trace new processes via exec() syscalls.
+ *                For Linux, uses bpftrace and eBPF.
+ *
+ * This traces when processes call exec(). It is handy for identifying new
+ * processes created via the usual fork()->exec() sequence. Note that the
+ * return value is not currently traced, so the exec() may have failed.
+ *
+ * TODO: switch to tracepoints args. Support more args. Include retval.
+ *
+ * This is a bpftrace version of the bcc tool of the same name.
+ *
+ * 15-Nov-2017  Brendan Gregg   Created this.
+ * 11-Sep-2018     "     "      Switched to use join().
+ * 25-Dec-2024 hushanglai@unicloud.com Modified this.
+ */
+
+#ifndef BPFTRACE_HAVE_BTF
+#include <linux/sched.h>
+#endif
+
+#ifndef BPFTRACE_HAVE_BTF
+#include <linux/sched.h>
+#endif
+
+BEGIN
+{
+        printf("Unicloud opration audit");
+}
+
+uretprobe:/bin/bash:readline
+{
+        time("%H:%M:%S  ");
+        printf("%-9s %-6s %s\n", "TIME", "PID", "COMMAND");
+        printf("%-6d %s\n", pid, str(retval));
+}
+
+tracepoint:syscalls:sys_enter_execve
+{
+        $task = (struct task_struct *)curtask;
+
+        $argv0 = str(args->argv[0]);
+
+        if (strncmp($argv0, "/bin/bash", 9) == 0 || strncmp($argv0, "/bin/sh", 7) == 0 || strncmp($argv0, "sh", 2) == 0 || strncmp($argv0, "bash", 4) == 0) {
+
+        printf("%-15s %-7s %s\n", "TIME", "PID", "ARGS");
+
+    // Extract seconds and nanoseconds
+    $seconds = nsecs / 1000000000;
+    $nanoseconds = nsecs % 1000000000;
+
+    // Format date and time
+    $date_time_str = strftime("%Y-%m-%d %H:%M:%S", $seconds);
+    $microseconds = $nanoseconds / 1000; // Convert nanoseconds to microseconds
+
+    // Print the formatted date/time, PID, uid, and arguments
+    printf("%20s.%06d %-7d %s\n", $date_time_str, $microseconds, pid, str(args->filename));
+
+          join(args->argv);
+
+        }
+}
