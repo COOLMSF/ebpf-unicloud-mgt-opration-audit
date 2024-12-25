@@ -30,9 +30,14 @@ BEGIN
 
 uretprobe:/bin/bash:readline
 {
-        time("%H:%M:%S  ");
-        printf("%-9s %-6s %s\n", "TIME", "PID", "COMMAND");
-        printf("%-6d %s\n", pid, str(retval));
+    // Get the current time (in seconds)
+    $seconds = nsecs / 1000000000; // Convert nanoseconds to seconds
+
+    // Format the current time into a readable string (e.g., YYYY-MM-DD HH:MM:SS)
+    $date_time_str = strftime("%Y-%m-%d %H:%M:%S", $seconds);
+
+    // Print the formatted system time, PID, and command
+    printf("%-20s %-6d %s\n", $date_time_str, pid, str(retval));
 }
 
 tracepoint:syscalls:sys_enter_execve
